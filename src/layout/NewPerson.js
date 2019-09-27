@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import uuid from "uuid";
 import { Consumer } from "../context";
 import InputFormGroup from "../HtmlGenerator/InputFormGroup";
+import axios from "axios";
 
 export default class NewPerson extends Component {
   state = {
@@ -10,7 +11,7 @@ export default class NewPerson extends Component {
     email: "",
     errors: { name: "", email: "" }
   };
-  onSubmit = (dispatch, e) => {
+  onSubmit = async (dispatch, e) => {
     e.preventDefault();
     const { name, email } = this.state;
 
@@ -23,15 +24,19 @@ export default class NewPerson extends Component {
       return;
     }
 
+    const res = await axios.post("https://jsonplaceholder.typicode.com/users", {
+      name,
+      email
+    });
+    dispatch({
+      type: "CREATE_PERSON",
+      payload: res.data
+    });
+
     // if (age <= 0) {
     //   this.setState({ errors: { age: "Last name Is Requierd" } });
     //   return;
     // }
-
-    dispatch({
-      type: "CREATE_PERSON",
-      payload: { name, email }
-    });
 
     this.setState({
       id: "",
